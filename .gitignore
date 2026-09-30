@@ -36,8 +36,10 @@ yarn-error.log*
 # vercel
 .vercel
 
-# local dev tooling (machine-specific permissions/config)
+# local dev tooling (machine-specific permissions/config, agent scaffolding)
 .claude/
+AGENTS.md
+CLAUDE.md
 
 # typescript
 *.tsbuildinfo
