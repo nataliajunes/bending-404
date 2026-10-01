@@ -11,8 +11,9 @@ const SPOON_ASPECT = SPOON_NATIVE_WIDTH / SPOON_NATIVE_HEIGHT;
 const WALL_THICKNESS = 120;
 const MAX_SPOONS = 80;
 const SPAWN_INTERVAL_MS = 120;
-const HOVER_RADIUS = 220;
-const HOVER_FORCE = 0.02;
+const HOVER_RADIUS = 140;
+const HOVER_NUDGE_FORCE = 0.0022;
+const MAX_HOVER_SPEED = 60;
 
 export default function MatterSpoons() {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -114,24 +115,44 @@ export default function MatterSpoons() {
     render.canvas.addEventListener("pointermove", handlePointerMove);
     render.canvas.addEventListener("pointerleave", handlePointerLeave);
 
+    // Nudges spoons in the direction the cursor is actually moving, scaled by
+    // how fast it's moving -- a stationary cursor resting over the pile
+    // applies no force, so it never carves out a static empty zone.
+    let lastMousePos: { x: number; y: number } | null = null;
     const applyHoverForce = () => {
-      if (!hoverActive) return;
+      if (!hoverActive) {
+        lastMousePos = null;
+        return;
+      }
       const mousePos = mouse.position;
+      if (!lastMousePos) {
+        lastMousePos = { x: mousePos.x, y: mousePos.y };
+        return;
+      }
+
+      const moveX = mousePos.x - lastMousePos.x;
+      const moveY = mousePos.y - lastMousePos.y;
+      lastMousePos = { x: mousePos.x, y: mousePos.y };
+
+      const rawSpeed = Math.hypot(moveX, moveY);
+      if (rawSpeed < 1) return;
+      const dirX = moveX / rawSpeed;
+      const dirY = moveY / rawSpeed;
+      const speed = Math.min(rawSpeed, MAX_HOVER_SPEED);
+
       for (const body of spoons) {
         if (mouseConstraint.body === body) continue;
-        const dx = body.position.x - mousePos.x;
-        const dy = body.position.y - mousePos.y;
-        const dist = Math.hypot(dx, dy);
-        if (dist === 0 || dist >= HOVER_RADIUS) continue;
+        const dist = Math.hypot(body.position.x - mousePos.x, body.position.y - mousePos.y);
+        if (dist >= HOVER_RADIUS) continue;
         const strength = 1 - dist / HOVER_RADIUS;
-        const forceMagnitude = HOVER_FORCE * strength * body.mass;
+        const forceMagnitude = HOVER_NUDGE_FORCE * strength * speed * body.mass;
         const applicationPoint = {
           x: body.position.x + (Math.random() - 0.5) * (body.bounds.max.x - body.bounds.min.x),
           y: body.position.y + (Math.random() - 0.5) * (body.bounds.max.y - body.bounds.min.y),
         };
         Body.applyForce(body, applicationPoint, {
-          x: (dx / dist) * forceMagnitude,
-          y: (dy / dist) * forceMagnitude,
+          x: dirX * forceMagnitude,
+          y: dirY * forceMagnitude,
         });
       }
     };
