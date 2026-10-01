@@ -9,6 +9,8 @@ const SPOON_NATIVE_HEIGHT = 663;
 const SPOON_ASPECT = SPOON_NATIVE_WIDTH / SPOON_NATIVE_HEIGHT;
 
 const WALL_THICKNESS = 120;
+const MOBILE_BREAKPOINT = 768;
+const MOBILE_SPOON_SCALE = 0.5;
 const MAX_SPOONS = 80;
 const SPAWN_INTERVAL_MS = 120;
 const HOVER_RADIUS = 140;
@@ -60,7 +62,8 @@ export default function MatterSpoons() {
     });
     Composite.add(world, [ground, leftWall, rightWall]);
 
-    const spoonHeight = Math.max(80, Math.min(150, height / 5.5));
+    const isMobile = width < MOBILE_BREAKPOINT;
+    const spoonHeight = Math.max(80, Math.min(150, height / 5.5)) * (isMobile ? MOBILE_SPOON_SCALE : 1);
     const spoonWidth = spoonHeight * SPOON_ASPECT;
 
     const spoons: Matter.Body[] = [];
