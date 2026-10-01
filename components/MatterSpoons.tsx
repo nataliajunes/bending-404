@@ -31,7 +31,6 @@ export default function MatterSpoons() {
     const isMobile = width < MOBILE_BREAKPOINT;
 
     const engine = Engine.create();
-    engine.gravity.y = isMobile ? 1.5 : 1;
     const world = engine.world;
 
     const render = Render.create({
@@ -91,15 +90,22 @@ export default function MatterSpoons() {
       Composite.add(world, body);
     };
 
-    let spawned = 0;
-    const spawnInterval = window.setInterval(() => {
-      if (spawned >= MAX_SPOONS) {
-        window.clearInterval(spawnInterval);
-        return;
+    let spawnInterval: number | undefined;
+    if (isMobile) {
+      for (let i = 0; i < MAX_SPOONS; i++) {
+        spawnSpoon();
       }
-      spawnSpoon();
-      spawned += 1;
-    }, SPAWN_INTERVAL_MS);
+    } else {
+      let spawned = 0;
+      spawnInterval = window.setInterval(() => {
+        if (spawned >= MAX_SPOONS) {
+          window.clearInterval(spawnInterval);
+          return;
+        }
+        spawnSpoon();
+        spawned += 1;
+      }, SPAWN_INTERVAL_MS);
+    }
 
     const mouse = Mouse.create(render.canvas);
     const mouseConstraint = MouseConstraint.create(engine, {
@@ -179,7 +185,7 @@ export default function MatterSpoons() {
     window.addEventListener("resize", handleResize);
 
     return () => {
-      window.clearInterval(spawnInterval);
+      if (spawnInterval !== undefined) window.clearInterval(spawnInterval);
       window.removeEventListener("resize", handleResize);
       render.canvas.removeEventListener("pointermove", handlePointerMove);
       render.canvas.removeEventListener("pointerleave", handlePointerLeave);
