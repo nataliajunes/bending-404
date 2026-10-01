@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <div
-      className={`${instrumentSans.variable} ${instrumentSerif.variable} ${fragmentMono.variable} relative h-screen w-full overflow-hidden bg-black`}
+      className={`${instrumentSans.variable} ${instrumentSerif.variable} ${fragmentMono.variable} relative h-dvh w-full overflow-hidden bg-black`}
     >
       <MatterSpoons />
 

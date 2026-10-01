@@ -28,8 +28,10 @@ export default function MatterSpoons() {
 
     const width = container.clientWidth;
     const height = container.clientHeight;
+    const isMobile = width < MOBILE_BREAKPOINT;
 
     const engine = Engine.create();
+    engine.gravity.y = isMobile ? 1.5 : 1;
     const world = engine.world;
 
     const render = Render.create({
@@ -62,7 +64,6 @@ export default function MatterSpoons() {
     });
     Composite.add(world, [ground, leftWall, rightWall]);
 
-    const isMobile = width < MOBILE_BREAKPOINT;
     const spoonHeight = Math.max(80, Math.min(150, height / 5.5)) * (isMobile ? MOBILE_SPOON_SCALE : 1);
     const spoonWidth = spoonHeight * SPOON_ASPECT;
 
