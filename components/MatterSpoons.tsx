@@ -105,13 +105,13 @@ export default function MatterSpoons() {
     render.mouse = mouse;
 
     let hoverActive = false;
-    const handlePointerEnter = () => {
+    const handlePointerMove = () => {
       hoverActive = true;
     };
     const handlePointerLeave = () => {
       hoverActive = false;
     };
-    render.canvas.addEventListener("pointerenter", handlePointerEnter);
+    render.canvas.addEventListener("pointermove", handlePointerMove);
     render.canvas.addEventListener("pointerleave", handlePointerLeave);
 
     const applyHoverForce = () => {
@@ -152,7 +152,7 @@ export default function MatterSpoons() {
     return () => {
       window.clearInterval(spawnInterval);
       window.removeEventListener("resize", handleResize);
-      render.canvas.removeEventListener("pointerenter", handlePointerEnter);
+      render.canvas.removeEventListener("pointermove", handlePointerMove);
       render.canvas.removeEventListener("pointerleave", handlePointerLeave);
       Events.off(engine, "beforeUpdate", applyHoverForce);
       Render.stop(render);
