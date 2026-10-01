@@ -11,6 +11,8 @@ const SPOON_ASPECT = SPOON_NATIVE_WIDTH / SPOON_NATIVE_HEIGHT;
 const WALL_THICKNESS = 120;
 const MAX_SPOONS = 80;
 const SPAWN_INTERVAL_MS = 120;
+const HOVER_RADIUS = 160;
+const HOVER_FORCE = 0.0011;
 
 export default function MatterSpoons() {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -19,7 +21,7 @@ export default function MatterSpoons() {
     const container = containerRef.current;
     if (!container) return;
 
-    const { Engine, Render, Runner, Bodies, Composite, Body, Mouse, MouseConstraint } = Matter;
+    const { Engine, Render, Runner, Bodies, Composite, Body, Mouse, MouseConstraint, Events } = Matter;
 
     const width = container.clientWidth;
     const height = container.clientHeight;
@@ -102,6 +104,35 @@ export default function MatterSpoons() {
     Composite.add(world, mouseConstraint);
     render.mouse = mouse;
 
+    let hoverActive = false;
+    const handlePointerEnter = () => {
+      hoverActive = true;
+    };
+    const handlePointerLeave = () => {
+      hoverActive = false;
+    };
+    render.canvas.addEventListener("pointerenter", handlePointerEnter);
+    render.canvas.addEventListener("pointerleave", handlePointerLeave);
+
+    const applyHoverForce = () => {
+      if (!hoverActive) return;
+      const mousePos = mouse.position;
+      for (const body of spoons) {
+        if (mouseConstraint.body === body) continue;
+        const dx = body.position.x - mousePos.x;
+        const dy = body.position.y - mousePos.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist === 0 || dist >= HOVER_RADIUS) continue;
+        const strength = 1 - dist / HOVER_RADIUS;
+        const forceMagnitude = HOVER_FORCE * strength * body.mass;
+        Body.applyForce(body, body.position, {
+          x: (dx / dist) * forceMagnitude,
+          y: (dy / dist) * forceMagnitude,
+        });
+      }
+    };
+    Events.on(engine, "beforeUpdate", applyHoverForce);
+
     const handleResize = () => {
       if (!container) return;
       const newWidth = container.clientWidth;
@@ -121,6 +152,9 @@ export default function MatterSpoons() {
     return () => {
       window.clearInterval(spawnInterval);
       window.removeEventListener("resize", handleResize);
+      render.canvas.removeEventListener("pointerenter", handlePointerEnter);
+      render.canvas.removeEventListener("pointerleave", handlePointerLeave);
+      Events.off(engine, "beforeUpdate", applyHoverForce);
       Render.stop(render);
       Runner.stop(runner);
       Composite.clear(world, false);
