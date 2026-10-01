@@ -45,7 +45,7 @@ export default function Home() {
           href="https://bendingspoons.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="pointer-events-auto mt-8 inline-block rounded-full border bg-white px-3 py-2 font-[family-name:var(--font-instrument-sans)] text-[14px] font-semibold leading-[1.3] tracking-[0.025em] text-black transition-all duration-300 ease-in-out hover:bg-black hover:text-white md:px-[18px] md:py-2.5 md:text-[16px]"
+          className="pointer-events-auto mt-8 inline-block rounded-full border bg-white px-3 py-2 font-[family-name:var(--font-instrument-sans)] text-[14px] font-semibold leading-[1.3] tracking-[0.025em] text-black transition-all duration-300 ease-in-out hover:bg-black hover:text-white md:px-4.5 md:py-2.5 md:text-[16px]"
         >
           Return home
         </a>
