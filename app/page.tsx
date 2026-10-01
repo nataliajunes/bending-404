@@ -38,7 +38,7 @@ export default function Home() {
             found
           </em>
         </h1>
-        <p className="mt-6 max-w-md font-[family-name:var(--font-instrument-sans)] text-[32px] font-normal leading-[1.41] tracking-[-0.03em] text-white">
+        <p className="mt-6 max-w-md font-[family-name:var(--font-instrument-sans)] text-[20px] font-normal leading-[1.41] tracking-[-0.03em] text-white sm:text-[26px] md:text-[32px]">
           Nothing here but the 50+ spoons we&rsquo;ve bent so far.
         </p>
         <a
