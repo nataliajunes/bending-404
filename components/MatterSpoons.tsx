@@ -11,8 +11,8 @@ const SPOON_ASPECT = SPOON_NATIVE_WIDTH / SPOON_NATIVE_HEIGHT;
 const WALL_THICKNESS = 120;
 const MAX_SPOONS = 80;
 const SPAWN_INTERVAL_MS = 120;
-const HOVER_RADIUS = 160;
-const HOVER_FORCE = 0.0011;
+const HOVER_RADIUS = 220;
+const HOVER_FORCE = 0.02;
 
 export default function MatterSpoons() {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -125,7 +125,11 @@ export default function MatterSpoons() {
         if (dist === 0 || dist >= HOVER_RADIUS) continue;
         const strength = 1 - dist / HOVER_RADIUS;
         const forceMagnitude = HOVER_FORCE * strength * body.mass;
-        Body.applyForce(body, body.position, {
+        const applicationPoint = {
+          x: body.position.x + (Math.random() - 0.5) * (body.bounds.max.x - body.bounds.min.x),
+          y: body.position.y + (Math.random() - 0.5) * (body.bounds.max.y - body.bounds.min.y),
+        };
+        Body.applyForce(body, applicationPoint, {
           x: (dx / dist) * forceMagnitude,
           y: (dy / dist) * forceMagnitude,
         });
