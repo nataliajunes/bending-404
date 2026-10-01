@@ -39,7 +39,9 @@ export default function Home() {
           </em>
         </h1>
         <p className="mt-6 max-w-md font-[family-name:var(--font-instrument-sans)] text-[20px] font-normal leading-[1.41] tracking-[-0.03em] text-white sm:text-[26px] md:text-[32px]">
-          Nothing here but the 50+ spoons we&rsquo;ve bent so far.
+          Nothing here but the
+          <br />
+          50+ spoons we&rsquo;ve bent so far.
         </p>
         <a
           href="https://bendingspoons.com"
